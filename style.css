@@ -1,0 +1,36 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: #1e1e1e;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.topbar{
+    width: 100%;
+    background: #2c2c2c;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.topbar h1{
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-size: 24px;
+}
+
+.controls{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+button, input[type="range"]{
+    cursor: pointer;
+}
