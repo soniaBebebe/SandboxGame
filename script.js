@@ -157,6 +157,21 @@ function updateSand(x,y){
 }
 
 function updateFire(x,y){
+    if(isEmpty(x,y-1)){
+        swap(x,y,x,y-1);
+        y=y-1;
+    }
+    else{
+        const dir=Math.random()<0.5? -1:1;
+
+        if(isEmpty(x+dir, y-1)){
+            swap(x,y,x+dir,y-1);
+            x=x+dir;
+            y=y-1;
+        }
+
+    }
+
     const neighbors=[
         [x,y-1],
         [x-1,y],
@@ -173,23 +188,10 @@ function updateFire(x,y){
         if(grid[ny][nx]===WATER){
             grid[ny][nx]=EMPTY;
         }
-
-        if(isEmpty(x,y-1)){
-            swap(x,y,x,y-1);
-            return;
-        }
-
-        const dir=Math.random()<0.2? -1:1;
-
-        if(isEmpty(x+dir, y-1)){
-            swap(x,y,x+dir,y-1);
-            return;
-        }
-
-        if(Math.random()<0.02){
+    }
+    if(Math.random()<0.02){
             grid[y][x]=EMPTY;
         }
-    }
 
 
 }
