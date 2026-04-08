@@ -12,12 +12,16 @@ const EMPTY=0;
 const SAND=1;
 const WATER=2;
 const STONE=3;
+const FIRE=4;
+const GLASS=5;
 
 const COLORS={
     [EMPTY]: "#000000",
     [SAND]: "#d9b44a",
     [WATER]: "#3fa9f5",
-    [STONE]: "#777777"
+    [STONE]: "#777777",
+    [FIRE]: "#ff4500",
+    [GLASS]: "#aeefff"
 };
 
 let grid=createGrid();
@@ -83,6 +87,8 @@ function paint(e){
                     grid[ny][nx]=WATER;
                 } else if (currentType==="stone"){
                     grid[ny][nx]=STONE;
+                } else if (currentType==="fire"){
+                    grid[ny][nx]=FIRE;
                 }
             }
         }
@@ -98,6 +104,8 @@ function update(){
                 updateSand(x,y);
             } else if(cell===WATER){
                 updateWater(x,y);
+            } else if(cell===FIRE){
+                updateFire(x,y);
             }
         }
     }
@@ -146,6 +154,44 @@ function updateSand(x,y){
     if (isInside(x-dir, y+1)&&(isEmpty(x-dir, y+1) || grid[y+1][x-dir]===WATER)){
         swap(x,y,x-dir, y+1);
     }
+}
+
+function updateFire(x,y){
+    const neighbors=[
+        [x,y-1],
+        [x-1,y],
+        [x+1,y]
+    ];
+
+    for (let [nx,ny] of neighbors){
+        if(!isInside(nx,ny))continue;
+
+        if(grid[ny][nx]===SAND){
+            grid[ny][nx]=GLASS;
+        }
+
+        if(grid[ny][nx]===WATER){
+            grid[ny][nx]=EMPTY;
+        }
+
+        if(isEmpty(x,y-1)){
+            swap(x,y,x,y-1);
+            return;
+        }
+
+        const dir=Math.random()<0.2? -1:1;
+
+        if(isEmpty(x+dir, y-1)){
+            swap(x,y,x+dir,y-1);
+            return;
+        }
+
+        if(Math.random()<0.02){
+            grid[y][x]=EMPTY;
+        }
+    }
+
+
 }
 
 function isInside(x,y){
