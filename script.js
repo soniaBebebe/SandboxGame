@@ -40,7 +40,7 @@ toolButtons.forEach(btn=>{
     btn.addEventListener("click", ()=>{
         toolButtons.forEach(b=>b.classList.remove("active"));
         btn.classList.add("active");
-        currentTypeType=btn.dataset.type;
+        currentType=btn.dataset.type;
     });
 });
 
@@ -59,6 +59,8 @@ canvas.addEventListener("mouseup", ()=>{
     mouseDown=false;
 });
 
+console.log("click");
+
 function paint(e){
     const rect=canvas.getBoundingClientRect();
     const x=Math.floor((e.clientX-rect.left)/CELL_SIZE);
@@ -73,7 +75,7 @@ function paint(e){
             if (nx<0 || nx>=COLS || ny<0 || ny>=ROWS) continue;
 
             if (dx*dx+dy*dy<=brushSize*brushSize){
-                if (currentType==="erase"){
+                if (currentType==="eraser"){
                     grid[ny][nx]=EMPTY;
                 } else if (currentType==="sand"){
                     grid[ny][nx]=SAND;
@@ -101,6 +103,34 @@ function update(){
     }
 }
 
+function updateWater(x,y){
+    if (isEmpty(x,y+1)){
+        swap(x,y,x,y+1);
+        return;
+    }
+    
+    const dirs=Math.random()<0.5?[-1,1]:[1,-1];
+
+    for (let dir of dirs){
+        if (isEmpty(x+dir, y+1)){
+            swap(x,y,x+dir,y+1);
+            return;
+        }
+    }
+    for (let dir of dirs){
+        if (isEmpty(x+dir, y)){
+            swap(x,y,x+dir,y);
+            return;
+        }
+    }
+}
+
+function swap(x1,y1,x2,y2){
+    const temp=grid[y1][x1];
+    grid[y1][x1]=grid[y2][x2];
+    grid[y2][x2]=temp;
+}
+
 function updateSand(x,y){
     if (isEmpty(x,y+1) || grid[y+1][x]===WATER){
         swap(x,y,x,y+1);
@@ -125,3 +155,20 @@ function isInside(x,y){
 function isEmpty(x,y){
     return isInside(x,y) && grid[y][x]===EMPTY;
 }
+
+function draw(){
+    for (let y=0; y<ROWS; y++){
+        for (let x=0; x<COLS; x++){
+            ctx.fillStyle=COLORS[grid[y][x]];
+            ctx.fillRect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
+    }
+}
+
+function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
