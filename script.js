@@ -5,6 +5,9 @@ const CELL_SIZE=6;
 const COLS=120;
 const ROWS=80;
 
+let shakeTime=0;
+let shakeStrength=0;
+
 canvas.width=COLS * CELL_SIZE;
 canvas.height=ROWS*CELL_SIZE;
 
@@ -248,6 +251,9 @@ function explode(cx,cy,radius=6){
         }
     }
     playExplosion();
+
+    shakeTime=10;
+    shakeStrength=5;
 }
 
 function isInside(x,y){
@@ -259,12 +265,26 @@ function isEmpty(x,y){
 }
 
 function draw(){
+    let offsetX=0;
+    let offsetY=0;
+
+    if(shakeTime>0){
+        offsetX=(Math.random()-0.5)*shakeStrength;
+        offsetY=(Math.random()-0.5)*shakeStrength;
+        shakeTime--;
+    }
+
+    ctx.save();
+    ctx.translate(offsetX, offsetY);
+
     for (let y=0; y<ROWS; y++){
         for (let x=0; x<COLS; x++){
             ctx.fillStyle=COLORS[grid[y][x]];
             ctx.fillRect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
     }
+
+    ctx.restore();
 }
 
 function loop(){
