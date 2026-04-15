@@ -7,6 +7,8 @@ const ROWS=80;
 
 let shakeTime=0;
 let shakeStrength=0;
+let slowMo=0;
+let slowFactor=1;
 
 canvas.width=COLS * CELL_SIZE;
 canvas.height=ROWS*CELL_SIZE;
@@ -254,6 +256,9 @@ function explode(cx,cy,radius=6){
 
     shakeTime=10;
     shakeStrength=5;
+
+    slowMo=20;
+    slowFactor=4;
 }
 
 function isInside(x,y){
@@ -287,9 +292,22 @@ function draw(){
     ctx.restore();
 }
 
+let frame=0;
+
 function loop(){
-    update();
+    if(slowMo>0){
+        if (frame % slowFactor ===0){
+            update();
+        }
+        slowMo--;
+    } else{
+        update();
+    }
+
     draw();
+
+    frame++;
+
     requestAnimationFrame(loop);
 }
 
