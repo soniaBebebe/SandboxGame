@@ -16,7 +16,11 @@ const FIRE=4;
 const GLASS=5;
 const EXPLOSIVE=6;
 
-const explosionSound = new Audio("boomSound.mp3");
+const sounds=[
+    new Audio("boomSound1.mp3"),
+    new Audio("boomSound2.mp3"),
+    new Audio("boomSound3.mp3")
+];
 
 const COLORS={
     [EMPTY]: "#000000",
@@ -42,6 +46,12 @@ function createGrid(){
 
 function resetGrid(){
     grid=createGrid();
+}
+
+function playExplosion(){
+    const s=sounds[Math.floor(Math.random()*sounds.length)];
+    s.currentTime=0;
+    s.play();
 }
 
 toolButtons.forEach(btn=>{
@@ -118,6 +128,7 @@ function update(){
                 updateFire(x,y);
             } else if(cell===EXPLOSIVE){
                 explode(x,y,6);
+                grid[y][x]=EMPTY;
             }
         }
     }
@@ -236,8 +247,7 @@ function explode(cx,cy,radius=6){
             }
         }
     }
-    explosionSound.currentTime=0;
-    explosionSound.play();
+    playExplosion();
 }
 
 function isInside(x,y){
