@@ -14,6 +14,9 @@ const WATER=2;
 const STONE=3;
 const FIRE=4;
 const GLASS=5;
+const EXPLOSIVE=6;
+
+const explosionSound = new Audio("boomSound.mp3");
 
 const COLORS={
     [EMPTY]: "#000000",
@@ -21,7 +24,8 @@ const COLORS={
     [WATER]: "#3fa9f5",
     [STONE]: "#777777",
     [FIRE]: "#ff4500",
-    [GLASS]: "#aeefff"
+    [GLASS]: "#aeefff",
+    [EXPLOSIVE]: "#ff0000"
 };
 
 let grid=createGrid();
@@ -89,6 +93,8 @@ function paint(e){
                     grid[ny][nx]=STONE;
                 } else if (currentType==="fire"){
                     grid[ny][nx]=FIRE;
+                } else if (currentType==="bomb"){
+                    grid[ny][nx]=EXPLOSIVE;
                 }
             }
         }
@@ -110,6 +116,8 @@ function update(){
                 updateWater(x,y);
             } else if(cell===FIRE){
                 updateFire(x,y);
+            } else if(cell===EXPLOSIVE){
+                explode(x,y,6);
             }
         }
     }
@@ -199,6 +207,37 @@ function updateFire(x,y){
         }
 
 
+}
+
+function explode(cx,cy,radius=6){
+    for(let dy=-radius; dy<=radius; dy++){
+        for(let dx=-radius; dx<=radius; dx++){
+            const x=cx+dx;
+            const y=cy+dy;
+
+            if (!isInside(x,y)) continue;
+
+            if(dx*dx + dy*dy > radius*radius) continue;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            if(Math.random()<0.7){
+                grid[y][x] = EMPTY;
+            }
+            if(Math.random()<0.3){
+                grid[y][x]=FIRE;
+            }
+            if(Math.random()<0.2){
+                const nx=x+Math.floor(Math.random()*5-2);
+                const ny=y+Math.floor(Math.random()*5-2);
+
+                if(isInside(nx,ny)){
+                    grid[ny][nx]=SAND;
+                }
+            }
+        }
+    }
+    explosionSound.currentTime=0;
+    explosionSound.play();
 }
 
 function isInside(x,y){
