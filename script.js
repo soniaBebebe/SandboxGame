@@ -95,9 +95,13 @@ function paint(e){
     }
 }
 
+let updated =[];
+
 function update(){
+    updated = Array.from({length: ROWS}, ()=> Array(COLS).fill(false));
     for(let y=ROWS -2; y>=0; y--){
         for (let x=0; x<COLS; x++){
+            if (updated[y][x]) continue;
             const cell=grid[y][x];
 
             if (cell===SAND){
@@ -137,6 +141,7 @@ function swap(x1,y1,x2,y2){
     const temp=grid[y1][x1];
     grid[y1][x1]=grid[y2][x2];
     grid[y2][x2]=temp;
+    updated[y2][x2]=true;
 }
 
 function updateSand(x,y){
