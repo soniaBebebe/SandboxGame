@@ -10,6 +10,8 @@ let shakeStrength=0;
 let slowMo=0;
 let slowFactor=1;
 let flashTime=0;
+let windForce=0;
+let windTime=0;
 
 canvas.width=COLS * CELL_SIZE;
 canvas.height=ROWS*CELL_SIZE;
@@ -121,6 +123,11 @@ let updated =[];
 
 function update(){
     updated = Array.from({length: ROWS}, ()=> Array(COLS).fill(false));
+    if(windTime>0){
+        windTime--;
+    }else{
+        windForce=0;
+    }
     for(let y=ROWS -2; y>=0; y--){
         for (let x=0; x<COLS; x++){
             if (updated[y][x]) continue;
@@ -160,6 +167,12 @@ function updateWater(x,y){
             return;
         }
     }
+
+    if (windForce!==0 && Math.random()<0.5){
+        if (isEmpty(x+windForce,y)){
+            swap(x,y,x+windForce, y);
+        }
+    }
 }
 
 function swap(x1,y1,x2,y2){
@@ -183,6 +196,12 @@ function updateSand(x,y){
 
     if (isInside(x-dir, y+1)&&(isEmpty(x-dir, y+1) || grid[y+1][x-dir]===WATER)){
         swap(x,y,x-dir, y+1);
+    }
+
+    if (windForce!==0 && Math.random()<0.3){
+        if (isEmpty(x+windForce,y)){
+            swap(x,y,x+windForce, y);
+        }
     }
 }
 
@@ -223,7 +242,11 @@ function updateFire(x,y){
             grid[y][x]=EMPTY;
         }
 
-
+        if (windForce!==0 && Math.random()<0.7){
+        if (isEmpty(x+windForce,y)){
+            swap(x,y,x+windForce, y);
+        }
+    }
 }
 
 function explode(cx,cy,radius=6){
@@ -265,6 +288,9 @@ function explode(cx,cy,radius=6){
         flashTime = 3;
     }
     playExplosion();
+
+    windForce =Math.random()<0.5 ? -1:1;
+    windTime=50;
 
     shakeTime=10;
     shakeStrength=5;
