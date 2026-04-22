@@ -168,6 +168,23 @@ function updateWater(x,y){
         }
     }
 
+    for (let dir of dirs){
+        const nx=x+dir;
+
+        if(!isInside(nx,y)) continue;
+
+        if(grid[y][nx]===WATER && isEmpty(nx+dir, y)){
+            swap(nx,y,nx+dir,y);
+        }
+    }
+
+    if(Math.random()<0.1){
+        const dir=Math.random()<0.5 ? -1:1;
+        if(isEmpty(x+dir,y)){
+            swap(x,y,x+dir,y);
+        }
+    }
+
     if (windForce!==0 && Math.random()<0.5){
         if (isEmpty(x+windForce,y)){
             swap(x,y,x+windForce, y);
