@@ -9,6 +9,7 @@ let shakeTime=0;
 let shakeStrength=0;
 let slowMo=0;
 let slowFactor=1;
+let flashTime=0;
 
 canvas.width=COLS * CELL_SIZE;
 canvas.height=ROWS*CELL_SIZE;
@@ -251,6 +252,7 @@ function explode(cx,cy,radius=6){
                 }
             }
         }
+        flashTime = 3;
     }
     playExplosion();
 
@@ -285,8 +287,14 @@ function draw(){
     for (let y=0; y<ROWS; y++){
         for (let x=0; x<COLS; x++){
             ctx.fillStyle=COLORS[grid[y][x]];
-            ctx.fillRect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            ctx.fillRect(0,0, canvas.width, canvas.height);
+            flashTime--;
         }
+    }
+
+    if (flashTime > 0){
+        ctx.fillStyle = "rgba(255,255,255, 0.6)";
+        ctx.fillRect(0,0, canvas.width, canvas.height)
     }
 
     ctx.restore();
