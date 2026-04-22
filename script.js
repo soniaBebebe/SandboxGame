@@ -237,20 +237,30 @@ function explode(cx,cy,radius=6){
             if(dx*dx + dy*dy > radius*radius) continue;
             const dist = Math.sqrt(dx*dx + dy*dy);
 
+            const forceX =dx===0 ? 0:dx/dist;
+            const forceY=dy===0 ? 0:dy/dist;
+
+            const pushX=Math.round(x+forceX*3);
+            const pushY=Math.round(y+forceY*3);
+
+            if (grid[y][x] !==EMPTY &&isInside(pushX,pushY)){
+                grid[pushY][pushX]=grid[y][x];
+            }
+
             if(Math.random()<0.7){
                 grid[y][x] = EMPTY;
             }
             if(Math.random()<0.3){
                 grid[y][x]=FIRE;
             }
-            if(Math.random()<0.2){
-                const nx=x+Math.floor(Math.random()*5-2);
-                const ny=y+Math.floor(Math.random()*5-2);
+            // if(Math.random()<0.2){
+            //     const nx=x+Math.floor(Math.random()*5-2);
+            //     const ny=y+Math.floor(Math.random()*5-2);
 
-                if(isInside(nx,ny)){
-                    grid[ny][nx]=SAND;
-                }
-            }
+            //     if(isInside(nx,ny)){
+            //         grid[ny][nx]=SAND;
+            //     }
+            // }
         }
         flashTime = 3;
     }
@@ -287,14 +297,15 @@ function draw(){
     for (let y=0; y<ROWS; y++){
         for (let x=0; x<COLS; x++){
             ctx.fillStyle=COLORS[grid[y][x]];
-            ctx.fillRect(0,0, canvas.width, canvas.height);
-            flashTime--;
+            ctx.fillRect(x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            
         }
     }
 
     if (flashTime > 0){
         ctx.fillStyle = "rgba(255,255,255, 0.6)";
-        ctx.fillRect(0,0, canvas.width, canvas.height)
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+        flashTime--;
     }
 
     ctx.restore();
