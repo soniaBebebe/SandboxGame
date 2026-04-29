@@ -74,7 +74,7 @@ function playExplosion(){
 function canFallInto(x1,y1,x2,y2){
     if(!isInside(x2,y2)) return false;
 
-    return DENSITY[grid[y1][x1]]>DENSITY[grid[y1][x2]];
+    return DENSITY[grid[y1][x1]]>DENSITY[grid[y2][x2]];
 }
 
 toolButtons.forEach(btn=>{
@@ -185,8 +185,8 @@ function updateWater(x,y){
 
     let depth =0;
     
-    for (let i=1; 1<10; i++){
-        if (isInside(x,y+1) && grid[y+i][x]===WATER){
+    for (let i=1; i<10; i++){
+        if (isInside(x,y+i) && grid[y+i][x]===WATER){
             depth++;
         }else{
             break;
