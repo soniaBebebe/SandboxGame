@@ -24,6 +24,7 @@ const FIRE=4;
 const GLASS=5;
 const EXPLOSIVE=6;
 const ICE=7;
+const SMOKE=8;
 
 const DENSITY={
     [EMPTY]: 0,
@@ -33,7 +34,8 @@ const DENSITY={
     [FIRE]: 0.2,
     [GLASS]: 5,
     [EXPLOSIVE]: 4,
-    [ICE]:6
+    [ICE]:6,
+    [SMOKE]:0.1
 };
 
 const sounds=[
@@ -50,7 +52,8 @@ const COLORS={
     [FIRE]: "#ff4500",
     [GLASS]: "#aeefff",
     [EXPLOSIVE]: "#ff0000",
-    [ICE]: "#bfe9ff"
+    [ICE]: "#bfe9ff",
+    [SMOKE]:"#555555"
 };
 
 let grid=createGrid();
@@ -165,6 +168,8 @@ function update(){
                 grid[y][x]=EMPTY;
             } else if(cell===ICE){
                 updateIce(x,y);
+            } else if(cell===SMOKE){
+                updateSmoke(x,y);
             }
         }
     }
@@ -311,6 +316,11 @@ function updateFire(x,y){
             swap(x,y,x+windForce, y);
         }
     }
+    if(Math.random()<0.1){
+        if(isEmpty(x,y-1)){
+            grid[y-1][x]=SMOKE;
+        }
+    }
 }
 
 function updateIce(x,y){
@@ -334,6 +344,39 @@ function updateIce(x,y){
             grid[y][x]=WATER;
             return;
         }
+    }
+}
+
+function updateSmoke(x,y){
+    if(isEmpty(x,y-1)){
+        swap(x,y,x,y-1);
+        return;
+    }
+
+    const dirs=Math.random()<0.5 ? [-1,1]:[1,-1];
+
+    for (let dir of dirs){
+        if(isEmpty(x+dir, y-1)){
+            swap(x,y,x+dir, y-1);
+            return;
+        }
+    }
+
+    for(let dir of dirs){
+        if (isEmpty(x+dir,y)){
+            swap(x,y,x+dir,y);
+            return;
+        }
+    }
+
+    if(windForce !==0 && Math.random()<0.6){
+        if(isEmpty(x+windForce,y)){
+            swap(x,y,x+windForce, y);
+        }
+    }
+
+    if (Math.random()<0.02){
+        grid[y][x]=EMPTY;
     }
 }
 
