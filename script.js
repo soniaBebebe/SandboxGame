@@ -23,6 +23,15 @@ const STONE=3;
 const FIRE=4;
 const GLASS=5;
 const EXPLOSIVE=6;
+const DENSITY={
+    [EMPTY]: 0,
+    [SAND]:3,
+    [WATER]: 1,
+    [STONE]: 10,
+    [FIRE]: 0.2,
+    [GLASS]: 5,
+    [EXPLOSIVE]: 4
+};
 
 const sounds=[
     new Audio("boomSound1.mp3"),
@@ -60,6 +69,12 @@ function playExplosion(){
     const s=sounds[Math.floor(Math.random()*sounds.length)];
     s.currentTime=0;
     s.play();
+}
+
+function canFallInto(x1,y1,x2,y2){
+    if(!isInside(x2,y2)) return false;
+
+    return DENSITY[grid[y1][x1]]>DENSITY[grid[y1][x2]];
 }
 
 toolButtons.forEach(btn=>{
@@ -148,7 +163,7 @@ function update(){
 }
 
 function updateWater(x,y){
-    if (isEmpty(x,y+1)){
+    if (canFallInto(x,y,x,y+1)){
         swap(x,y,x,y+1);
         return;
     }
@@ -220,18 +235,18 @@ function swap(x1,y1,x2,y2){
 }
 
 function updateSand(x,y){
-    if (isEmpty(x,y+1) || grid[y+1][x]===WATER){
+    if (canFallInto(x,y,x,y+1)){
         swap(x,y,x,y+1);
         return;
     }
     const dir=Math.random()<0.5 ? -1:1;
 
-    if (isInside(x+dir, y+1)&&(isEmpty(x+dir, y+1) || grid[y+1][x+dir]===WATER)){
+    if (isInside(x+dir, y+1)&&canFallInto(x,y,x+dir,y+1)){
         swap(x,y,x+dir, y+1);
         return;
     }
 
-    if (isInside(x-dir, y+1)&&(isEmpty(x-dir, y+1) || grid[y+1][x-dir]===WATER)){
+    if (isInside(x-dir, y+1)&&canFallInto(x,y,x+dir,y+1)){
         swap(x,y,x-dir, y+1);
     }
 
@@ -243,7 +258,7 @@ function updateSand(x,y){
 }
 
 function updateFire(x,y){
-    if(isEmpty(x,y-1)){
+    if(canFallInto(x,y,x,y-1)){
         swap(x,y,x,y-1);
         y=y-1;
     }
