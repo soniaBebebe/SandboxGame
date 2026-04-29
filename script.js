@@ -451,6 +451,8 @@ function draw(){
     ctx.save();
     ctx.translate(offsetX, offsetY);
 
+    drawFireLight();
+
     for (let y=0; y<ROWS; y++){
         for (let x=0; x<COLS; x++){
             ctx.fillStyle=COLORS[grid[y][x]];
@@ -466,6 +468,33 @@ function draw(){
     }
 
     ctx.restore();
+}
+
+function drawFireLight(){
+    ctx.globalCompositeOperation="lighter";
+
+    for(let y=0; y<ROWS; y++){
+        for (let x=0; x<COLS; x++){
+            if(grid[y][x] === FIRE){
+                const px=x*CELL_SIZE;
+                const py=y*CELL_SIZE;
+                const radius = 20;
+                const gradient=ctx.createRadialGradient(
+                    px,py,0,
+                    px,py,radius
+                );
+
+                gradient.addColorStop(0,"rgba(255,200,50,0.6)");
+                gradient.addColorStop(1,"rgba(255,100,0,0)");
+
+                ctx.fillStyle=gradient;
+                ctx.beginPath();
+                ctx.arc(px,py,radius,0,Math.PI*2);
+                ctx.fill();
+            }
+
+        }
+    }
 }
 
 let frame=0;
