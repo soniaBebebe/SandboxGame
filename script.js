@@ -23,6 +23,8 @@ const STONE=3;
 const FIRE=4;
 const GLASS=5;
 const EXPLOSIVE=6;
+const ICE=7;
+
 const DENSITY={
     [EMPTY]: 0,
     [SAND]:3,
@@ -30,7 +32,8 @@ const DENSITY={
     [STONE]: 10,
     [FIRE]: 0.2,
     [GLASS]: 5,
-    [EXPLOSIVE]: 4
+    [EXPLOSIVE]: 4,
+    [ICE]:6
 };
 
 const sounds=[
@@ -46,7 +49,8 @@ const COLORS={
     [STONE]: "#777777",
     [FIRE]: "#ff4500",
     [GLASS]: "#aeefff",
-    [EXPLOSIVE]: "#ff0000"
+    [EXPLOSIVE]: "#ff0000",
+    [ICE]: "#bfe9ff"
 };
 
 let grid=createGrid();
@@ -128,6 +132,8 @@ function paint(e){
                     grid[ny][nx]=FIRE;
                 } else if (currentType==="bomb"){
                     grid[ny][nx]=EXPLOSIVE;
+                }else if (currentType==='ice'){
+                    grid[ny][nx]=ICE;
                 }
             }
         }
@@ -157,6 +163,8 @@ function update(){
             } else if(cell===EXPLOSIVE){
                 explode(x,y,6);
                 grid[y][x]=EMPTY;
+            } else if(cell===ICE){
+                updateIce(x,y);
             }
         }
     }
@@ -168,6 +176,10 @@ function updateWater(x,y){
         return;
     }
     
+    if(Math.random()<0.001){
+        grid[y][x]=ICE;
+    }
+
     const dirs=Math.random()<0.5?[-1,1]:[1,-1];
 
     for (let dir of dirs){
@@ -297,6 +309,30 @@ function updateFire(x,y){
         if (windForce!==0 && Math.random()<0.7){
         if (isEmpty(x+windForce,y)){
             swap(x,y,x+windForce, y);
+        }
+    }
+}
+
+function updateIce(x,y){
+    if(Math.random()<0.01){
+        if(canFallInto(x,y,x,y+1)){
+            swap(x,y,x,y+1);
+        }
+    }
+
+    const neighbors=[
+        [x,y-1],
+        [x,y+1],
+        [x-1,y],
+        [x+1,y]
+    ];
+
+    for (let [nx,ny] of neighbors){
+        if(!isInside(nx,ny))continue;
+
+        if (grid[ny][nx]===FIRE){
+            grid[y][x]=WATER;
+            return;
         }
     }
 }
