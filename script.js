@@ -495,6 +495,7 @@ function drawFireLight(){
 
         }
     }
+    ctx.globalCompositeOperation="source-over";
 }
 
 let frame=0;
